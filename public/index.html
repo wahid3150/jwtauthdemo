@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>JWT Auth Demo</title>
+  </head>
+  <body>
+    <h2>JWT Auth Demo</h2>
+
+    <button onclick="loginWithCookie()">Login with Cookie</button>
+    <button onclick="loginWithHeader()">Login with Header</button>
+    <button onclick="getProtected()">Access Protected Route</button>
+
+    <p id="result"></p>
+
+    <script>
+      let token = null;
+
+      async function loginWithCookie() {
+        const res = await fetch("/login-cookie", { method: "POST" });
+        const data = await res.json();
+        document.getElementById("result").textContent = `Logged in with cookie`;
+      }
+
+      async function loginWithHeader() {
+        const res = await fetch("/login-header", { method: "POST" });
+        const data = await res.json();
+        token = data.token;
+        document.getElementById(
+          "result"
+        ).textContent = `Token stored for headers: ${token}`;
+      }
+
+      async function getProtected() {
+        const res = await fetch("/protected", {
+          method: "GET",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
+        const data = await res.json();
+        document.getElementById("result").textContent = JSON.stringify(data);
+      }
+    </script>
+  </body>
+</html>
